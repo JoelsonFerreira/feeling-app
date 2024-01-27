@@ -8,7 +8,7 @@ export function Button(props: ButtonHTMLAttributes<HTMLButtonElement>) {
 
 export function ButtonIcon({ label, icon, ...props }: { label?: string, icon?: JSX.Element } & HTMLAttributes<HTMLButtonElement>) {
   return (
-    <button className="flex items-center gap-1 transition-colors hover:text-[#1d9bf0] group" {...props}>
+    <button {...props} className={`${props.className} flex items-center gap-1 transition-colors hover:text-[#1d9bf0] group`}>
       <span className="relative flex items-center justify-center">
         <span className="absolute scale-150 w-full h-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors group-hover:bg-[#1d9bf033]" />
         {icon}

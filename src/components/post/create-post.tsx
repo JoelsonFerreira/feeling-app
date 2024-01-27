@@ -57,13 +57,14 @@ const icons = [
   )
 ]
 
-export function CreatePost({ user }: { user: User }) {
+export function CreatePost({ user, parentPostId }: { user: User, parentPostId?: string }) {
   return (
     <div className="p-4 flex items-start gap-3">
       <Avatar alt="" src={user.avatar ?? ""} />
       <form className="flex flex-col grow gap-4" action={savePost}>
         <textarea placeholder="O que está acontecendo?" className="w-full bg-transparent" name="status" />
         <input type="hidden" name="userId" value={user.id} />
+        <input type="hidden" name="parentPostId" value={parentPostId} />
         <div className="flex items-center justify-between">
           <div role="tablist" className="text-[rgb(29,_155,_240)] flex gap-4">
             {icons.map((icon, idx) => <ButtonIcon key={idx} icon={icon} />)}

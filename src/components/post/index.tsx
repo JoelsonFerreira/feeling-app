@@ -8,9 +8,10 @@ import { ViewIcon } from "@/icons/view";
 
 import { ButtonIcon } from "@/components/ui/button";
 
-import type { Post, User } from "@prisma/client";
 import { likePost } from "@/actions/posts/like";
 import { Avatar } from "../ui/avatar";
+import { timeSince } from "@/lib/utils";
+import { TPost } from "@/actions/posts/get-all";
 
 function abbrNum(number: number, decPlaces: number) {
   let _number = number
@@ -38,7 +39,7 @@ function abbrNum(number: number, decPlaces: number) {
   return `${_number}`;
 }
 
-function PostFooter({ post }: { post: Post }) {
+function PostFooter({ post }: { post: TPost }) {
   return (
     <footer className="flex justify-between items-center mt-3 text-[#666666]">
       <ButtonIcon icon={<CommentIcon />} label={abbrNum(post.comments, 2)} />
@@ -52,7 +53,7 @@ function PostFooter({ post }: { post: Post }) {
   )
 }
 
-function PostContent({ post }: { post: Post }) {
+function PostContent({ post }: { post: TPost }) {
   return (
     <main className="text-[#e9e7ea] text-sm mt-2">
       <span>{post.status}</span>
@@ -72,18 +73,29 @@ function PostContent({ post }: { post: Post }) {
   )
 }
 
-export function Post({ post, user }: { post: Post, user: User }) {
+export function Post({ post }: { post: TPost }) {
   return (
-    <section className="border-y border-[#2F3336] p-4 flex gap-3 justify-start items-start">
-      <Avatar alt="" src={user.avatar ?? ""} />
+    <Link href={`/post/${post.id}`} className="border-y border-[#2F3336] p-4 flex gap-3 justify-start items-start">
+      <Avatar alt="" src={post.user?.avatar ?? ""} />
       <article className="w-full flex flex-col">
-        <header className="flex items-center gap-1">
-          <Link href="/" className="font-semibold hover:underline leading-none">{user.name}</Link>
-          <span className="text-sm text-[rgb(113,_118,_123)] leading-none">@{user.id}</span>
+        <header className="flex items-center justify-between gap-1">
+          <div className="flex items-center gap-1">
+            <Link href="/" className="font-semibold hover:underline leading-none">{post.user?.name}</Link>
+            <span className="text-sm text-[rgb(113,_118,_123)] leading-none">@{post.user?.id}</span>
+            <span className="text-sm text-[rgb(113,_118,_123)] leading-none relative flex items-center pl-1.5 before:left-0 before:absolute before:w-[2px] before:h-[2px] before:bg-[rgb(113,_118,_123)] before:rounded-full">{timeSince(post.createdAt)}</span>
+          </div>
+          <ButtonIcon className="text-[rgb(113,_118,_123)]" icon={(
+            <svg viewBox="0 0 24 24" aria-hidden="true" width={18} height={18} fill="currentColor">
+              <g>
+                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z">
+                </path>
+              </g>
+            </svg>
+          )} />
         </header>
         <PostContent post={post} />
         <PostFooter post={post} />
       </article>
-    </section>
+    </Link>
   )
 }

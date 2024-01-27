@@ -9,13 +9,17 @@ datasource db {
 }
 
 model Post {
-  id     String @id @default(cuid())
+  id String @id @default(cuid())
+
+  parentId String?
+  parent   Post?   @relation("replies", fields: [parentId], references: [id])
+  children Post[]  @relation("replies")
+
   status String
 
-  comments Int
-  shares   Int
-  likes    Int
-  views    Int
+  shares Int
+  likes  Int
+  views  Int
 
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @updatedAt @map(name: "updated_at")

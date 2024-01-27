@@ -1,7 +1,10 @@
 import prisma from "@/lib/prisma";
-import { getUserById } from "../users/get";
+import { Post, User } from "@prisma/client";
+import { getUserById } from "@/actions/users/get";
 
-export async function getAllPosts() {
+export type TPost = Post & { comments: number, user: User | null }
+
+export async function getAllPosts(): Promise<TPost[]> {
   const posts = await prisma.post.findMany({
     orderBy: {
       createdAt: "desc"
@@ -26,6 +29,7 @@ export async function getAllPosts() {
   return Promise.all(
     posts.map(async post => ({
       ...post,
+      comments: await prisma.post.count({ where: { parentId: post.id } }),
       user: await getUserById(post.authorId ?? "")
     }))
   )

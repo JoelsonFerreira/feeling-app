@@ -8,7 +8,7 @@ import { TabLayout } from "@/components/common/tab-layout";
 import { CreatePost } from "@/components/post/create-post";
 
 import { getUserById } from "@/actions/users/get";
-import { getAllPosts } from "@/actions/posts/getAll";
+import { getAllPosts } from "@/actions/posts/get-all";
 
 export const revalidate = 0
 
@@ -35,7 +35,7 @@ export default async function Home() {
 
       {posts.map(post => (
         <Fragment key={post.id}>
-          {post.user && <Post post={post} user={post.user} />}
+          {post.user && <Post post={post} />}
         </Fragment>
       ))}
     </>
