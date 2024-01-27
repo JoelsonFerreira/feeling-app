@@ -20,8 +20,8 @@ export default async function PostPage({ params: { postId } }: PostPageProps) {
   const userId = cookies().get("auth_token")?.value ?? "";
 
   const user = await getUserById(userId);
-  const post = await getPost(postId)
-  const replies = await getPostReplies(postId)
+  const post = await getPost(postId, userId);
+  const replies = await getPostReplies(postId, userId);
 
   if (!post || !post.user) return <></>;
 

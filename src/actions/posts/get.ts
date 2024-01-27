@@ -1,38 +1,43 @@
 import prisma from "@/lib/prisma";
 import { getUserById } from "@/actions/users/get";
+import { Post } from "@prisma/client";
 
-export async function getPostReplies(postId: string) {
+export async function getPostRelations(post: Post) {
+  return {
+    ...post,
+    comments: await prisma.post.count({ where: { parentId: post.id } }),
+    likes: await prisma.like.count({ where: { postId: post.id } }),
+    views: await prisma.view.count({ where: { postId: post.id } }),
+    user: await getUserById(post.authorId ?? "")
+  }
+}
+
+export async function viewPost(postId: string, userId: string) {
+  try {    
+    return await prisma.view.create({
+      data: {
+        postId,
+        userId,
+      }
+    });
+  } catch(err) {
+    return null;
+  }
+}
+
+export async function getPostReplies(postId: string, userId: string) {
   const posts = await prisma.post.findMany({
     where: {
       parentId: postId
     },
   })
 
-  await Promise.all(
-    posts.map(post =>
-      prisma
-        .post
-        .update({
-          where: {
-            id: post.id
-          },
-          data: {
-            views: post.views + 1
-          }
-        })
-    )
-  )
+  await Promise.all(posts.map(post => viewPost(post.id, userId)))
 
-  return Promise.all(
-    posts.map(async post => ({
-      ...post,
-      comments: post.parentId ? await prisma.post.count({ where: { id: post.parentId } }) : 0,
-      user: await getUserById(post.authorId ?? "")
-    }))
-  )
+  return Promise.all(posts.map(post => getPostRelations(post)))
 }
 
-export async function getPost(postId: string) {
+export async function getPost(postId: string, userId: string) {
   const post = await prisma.post.findUnique({
     where: {
       id: postId
@@ -41,20 +46,9 @@ export async function getPost(postId: string) {
 
   if (!post) return;
 
-  await prisma.post.update({
-    where: {
-      id: post.id
-    },
-    data: {
-      views: post.views + 1
-    }
-  })
+  await viewPost(post.id, userId)
 
-  return {
-    ...post,
-    comments: post.parentId ? await prisma.post.count({ where: { id: post.parentId } }) : 0,
-    user: await getUserById(post.authorId ?? "")
-  }
+  return getPostRelations(post)
 }
 
 export async function getPostsByUser(userId: string) {
@@ -69,26 +63,7 @@ export async function getPostsByUser(userId: string) {
     }
   })
 
-  await Promise.all(
-    posts.map(post =>
-      prisma
-        .post
-        .update({
-          where: {
-            id: post.id
-          },
-          data: {
-            views: post.views + 1
-          }
-        })
-    )
-  )
+  await Promise.all(posts.map(post => viewPost(post.id, userId)))
 
-  return Promise.all(
-    posts.map(async post => ({
-      ...post,
-      comments: post.parentId ? await prisma.post.count({ where: { id: post.parentId } }) : 0,
-      user: await getUserById(post.authorId ?? "")
-    }))
-  )
+  return Promise.all(posts.map(post => getPostRelations(post)))
 }

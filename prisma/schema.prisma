@@ -18,8 +18,8 @@ model Post {
   status String
 
   shares Int
-  likes  Int
-  views  Int
+  likes  Like[]
+  views  View[]
 
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @updatedAt @map(name: "updated_at")
@@ -37,4 +37,26 @@ model User {
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @updatedAt @map(name: "updated_at")
   posts     Post[]
+  likes     Like[]
+  views     View[]
+}
+
+model Like {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+
+  @@unique([userId, postId], name: "likeIdentifier")
+}
+
+model View {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+
+  @@unique([userId, postId], name: "viewIdentifier")
 }

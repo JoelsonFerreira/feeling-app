@@ -46,6 +46,7 @@ function PostFooter({ post }: { post: TPost }) {
       <ButtonIcon icon={<ShareIcon />} label={abbrNum(post.shares, 2)} />
       <form action={likePost}>
         <input type="hidden" name="postId" value={post.id} />
+        <input type="hidden" name="userId" value={post.user?.id} />
         <ButtonIcon icon={<LikeIcon />} label={abbrNum(post.likes, 2)} />
       </form>
       <ButtonIcon icon={<ViewIcon />} label={abbrNum(post.views, 2)} />
@@ -55,7 +56,7 @@ function PostFooter({ post }: { post: TPost }) {
 
 function PostContent({ post }: { post: TPost }) {
   return (
-    <main className="text-[#e9e7ea] text-sm mt-2">
+    <Link href={`/post/${post.id}`} className="text-[#e9e7ea] text-sm mt-2">
       <span>{post.status}</span>
       {/* <div>
         {post.media.map((item, idx) =>
@@ -69,13 +70,13 @@ function PostContent({ post }: { post: TPost }) {
           />
         )}
       </div> */}
-    </main>
+    </Link>
   )
 }
 
 export function Post({ post }: { post: TPost }) {
   return (
-    <Link href={`/post/${post.id}`} className="border-y border-[#2F3336] p-4 flex gap-3 justify-start items-start">
+    <section className="border-y border-[#2F3336] p-4 flex gap-3 justify-start items-start">
       <Avatar alt="" src={post.user?.avatar ?? ""} />
       <article className="w-full flex flex-col">
         <header className="flex items-center justify-between gap-1">
@@ -96,6 +97,6 @@ export function Post({ post }: { post: TPost }) {
         <PostContent post={post} />
         <PostFooter post={post} />
       </article>
-    </Link>
+    </section>
   )
 }

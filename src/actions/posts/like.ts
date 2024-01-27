@@ -5,15 +5,19 @@ import { revalidatePath } from "next/cache";
 
 export async function likePost(data: FormData) {
   const postId = data.get("postId")?.toString() ?? "";
+  const userId = data.get("userId")?.toString() ?? "";
 
-  const post = await prisma.post.findUnique({ where: { id: postId } });
-
-  if(post) {
-    await prisma.post.update({
-      where: { id: post.id },
-      data: { likes: post.likes + 1 }
+  try {
+    await prisma.like.create({
+      data: {
+        postId,
+        userId
+      }
     })
   
     revalidatePath("/")
+
+  } catch {
+
   }
 }

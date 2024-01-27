@@ -16,7 +16,7 @@ export default async function Home() {
   const userId = cookies().get("auth_token")?.value ?? "";
 
   const user = await getUserById(userId);
-  const posts = await getAllPosts();
+  const posts = await getAllPosts(userId);
 
   if(!user) {
     redirect("/login");
