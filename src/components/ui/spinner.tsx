@@ -9,3 +9,5 @@ export const Spinner = forwardRef<HTMLDivElement>((props, ref) => (
     <span className="sr-only">Loading...</span>
   </div>
 ));
+
+Spinner.displayName = 'Spinner';
