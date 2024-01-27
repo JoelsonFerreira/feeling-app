@@ -13,9 +13,7 @@ export async function savePost(data: FormData) {
       status: status,
       authorId: userId,
       parentId: parentPostId,
-      likes: 0,
       shares: 0,
-      views: 0,
     }
   })
 
