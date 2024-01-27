@@ -14,9 +14,9 @@ export async function loginUser(data: FormData) {
       id: name
     }
   })
-
+  
   if(user?.password === password) {
-    cookies().set("auth_token", user.name)
+    cookies().set("auth_token", user.id)
 
     redirect("/")
   }
