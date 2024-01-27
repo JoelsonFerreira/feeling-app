@@ -9,6 +9,7 @@ import { CreatePost } from "@/components/post/create-post";
 
 import { getUserById } from "@/actions/users/get";
 import { getAllPosts } from "@/actions/posts/get-all";
+import { ShowMorePosts } from "@/components/post/show-more";
 
 export const revalidate = 0
 
@@ -35,9 +36,11 @@ export default async function Home() {
 
       {posts.map(post => (
         <Fragment key={post.id}>
-          {post.user && <Post post={post} />}
+          {post.user && <Post post={post} user={user} />}
         </Fragment>
       ))}
+
+      <ShowMorePosts user={user} />
     </>
   );
 }

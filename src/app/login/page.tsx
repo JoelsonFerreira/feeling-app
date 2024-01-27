@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
+
 import { loginUser } from "@/actions/users/login";
 
 export default function Login() {
@@ -10,7 +11,7 @@ export default function Login() {
         <input className="text-black" placeholder="Nome de usuário" name="name" />
         <input className="text-black" placeholder="********" type="password" name="password" />
 
-        <Button>Avançar</Button>
+        <SubmitButton>Avançar</SubmitButton>
 
         <span>Não tem uma conta? <Link href="/register">Inscreva-se</Link></span>
       </form>

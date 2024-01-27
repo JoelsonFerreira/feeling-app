@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { CommentIcon } from "@/icons/comment";
@@ -7,11 +6,14 @@ import { LikeIcon } from "@/icons/like";
 import { ViewIcon } from "@/icons/view";
 
 import { ButtonIcon } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
 
 import { likePost } from "@/actions/posts/like";
-import { Avatar } from "../ui/avatar";
+import type { TPost } from "@/actions/posts/get-all";
+
 import { timeSince } from "@/lib/utils";
-import { TPost } from "@/actions/posts/get-all";
+
+import { User } from "@prisma/client";
 
 function abbrNum(number: number, decPlaces: number) {
   let _number = number
@@ -39,14 +41,14 @@ function abbrNum(number: number, decPlaces: number) {
   return `${_number}`;
 }
 
-function PostFooter({ post }: { post: TPost }) {
+function PostFooter({ post, user }: { post: TPost, user: User | null }) {
   return (
     <footer className="flex justify-between items-center mt-3 text-[#666666]">
       <ButtonIcon icon={<CommentIcon />} label={abbrNum(post.comments, 2)} />
       <ButtonIcon icon={<ShareIcon />} label={abbrNum(post.shares, 2)} />
       <form action={likePost}>
         <input type="hidden" name="postId" value={post.id} />
-        <input type="hidden" name="userId" value={post.user?.id} />
+        <input type="hidden" name="userId" value={user?.id} />
         <ButtonIcon icon={<LikeIcon />} label={abbrNum(post.likes, 2)} />
       </form>
       <ButtonIcon icon={<ViewIcon />} label={abbrNum(post.views, 2)} />
@@ -74,7 +76,7 @@ function PostContent({ post }: { post: TPost }) {
   )
 }
 
-export function Post({ post }: { post: TPost }) {
+export function Post({ post, user }: { post: TPost, user: User | null }) {
   return (
     <section className="border-y border-[#2F3336] p-4 flex gap-3 justify-start items-start">
       <Avatar alt="" src={post.user?.avatar ?? ""} />
@@ -95,7 +97,7 @@ export function Post({ post }: { post: TPost }) {
           )} />
         </header>
         <PostContent post={post} />
-        <PostFooter post={post} />
+        <PostFooter post={post} user={user} />
       </article>
     </section>
   )

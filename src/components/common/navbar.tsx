@@ -10,7 +10,7 @@ const navLinks = [
       </svg>
     ),
     label: "",
-    href: "/",
+    href: "/", // href: "/",
   },
   {
     Icon: () => (
@@ -23,7 +23,7 @@ const navLinks = [
       </svg>
     ),
     label: "Página Inicial",
-    href: "/home",
+    href: "/", // href: "/home",
   },
   {
     Icon: () => (
@@ -36,7 +36,7 @@ const navLinks = [
       </svg>
     ),
     label: "Explorar",
-    href: "/explore",
+    href: "/", // href: "/explore",
   },
   {
     Icon: () => (
@@ -49,7 +49,7 @@ const navLinks = [
       </svg>
     ),
     label: "Notificações",
-    href: "/notifications",
+    href: "/", // href: "/notifications",
   },
   {
     Icon: () => (
@@ -62,7 +62,7 @@ const navLinks = [
       </svg>
     ),
     label: "Mensagens",
-    href: "/messages",
+    href: "/", // href: "/messages",
   },
   {
     Icon: () => (
@@ -75,7 +75,7 @@ const navLinks = [
       </svg>
     ),
     label: "Listas",
-    href: "/JoelFerreira00/lists",
+    href: "/", // href: "/JoelFerreira00/lists",
   },
   {
     Icon: () => (
@@ -88,7 +88,7 @@ const navLinks = [
       </svg>
     ),
     label: "Itens salvos",
-    href: "/i/bookmarks",
+    href: "/", // href: "/i/bookmarks",
   },
   {
     Icon: () => (
@@ -101,7 +101,7 @@ const navLinks = [
       </svg>
     ),
     label: "Comunidades",
-    href: "/JoelFerreira00/communities",
+    href: "/", // href: "/JoelFerreira00/communities",
   },
   {
     Icon: () => (
@@ -114,7 +114,7 @@ const navLinks = [
       </svg>
     ),
     label: "Premium",
-    href: "/i/verified-choose",
+    href: "/", // href: "/i/verified-choose",
   },
   {
     Icon: () => (
@@ -127,7 +127,7 @@ const navLinks = [
       </svg>
     ),
     label: "Perfil",
-    href: "/JoelFerreira00",
+    href: "/", // href: "/JoelFerreira00",
   },
   {
     Icon: () => (
@@ -140,7 +140,7 @@ const navLinks = [
       </svg>
     ),
     label: "Mais",
-    href: "/",
+    href: "/", // href: "/",
   }
 ]
 

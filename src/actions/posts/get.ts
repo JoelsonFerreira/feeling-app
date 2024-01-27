@@ -1,3 +1,5 @@
+"use server";
+
 import prisma from "@/lib/prisma";
 import { getUserById } from "@/actions/users/get";
 import { Post } from "@prisma/client";

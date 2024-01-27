@@ -1,10 +1,10 @@
-import Image from "next/image";
-
-import { Button, ButtonIcon } from "../ui/button";
+import { ButtonIcon } from "@/components/ui/button";
+import { Avatar } from "@/components/ui/avatar";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 import type { User } from "@prisma/client";
 import { savePost } from "@/actions/posts/save";
-import { Avatar } from "../ui/avatar";
+
 
 const icons = [
   (
@@ -70,7 +70,7 @@ export function CreatePost({ user, parentPostId }: { user: User, parentPostId?: 
             {icons.map((icon, idx) => <ButtonIcon key={idx} icon={icon} />)}
           </div>
 
-          <Button>Postar</Button>
+          <SubmitButton>Postar</SubmitButton>
         </div>
       </form>
     </div>

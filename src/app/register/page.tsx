@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 import { registerUser } from "@/actions/users/register";
 
@@ -24,7 +24,7 @@ export default function Register() {
           </label>
         </div> */}
 
-        <Button>Avançar</Button>
+        <SubmitButton>Avançar</SubmitButton>
       </form>
     </div>
   )

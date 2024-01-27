@@ -12,7 +12,7 @@ export async function savePost(data: FormData) {
     data: {
       status: status,
       authorId: userId,
-      parentId: parentPostId,
+      ...parentPostId ? {parentId: parentPostId} : {},
       shares: 0,
     }
   })

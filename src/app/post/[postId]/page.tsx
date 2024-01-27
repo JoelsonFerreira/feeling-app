@@ -29,13 +29,13 @@ export default async function PostPage({ params: { postId } }: PostPageProps) {
     <div>
       <BackPost />
 
-      <Post post={post} />
+      <Post post={post} user={user} />
 
       {user && <CreatePost user={user} parentPostId={post.id} />}
 
       {replies.map(post => (
         <Fragment key={post.id}>
-          {post.user && <Post post={post} />}
+          {post.user && <Post post={post} user={user} />}
         </Fragment>
       ))}
     </div>
