@@ -1,11 +1,14 @@
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+
+import { Fragment } from "react";
+
 import { Post } from "@/components/post";
 import { TabLayout } from "@/components/common/tab-layout";
 import { CreatePost } from "@/components/post/create-post";
 
 import { getUserById } from "@/actions/users/get";
-import { getPostsByUser } from "@/actions/posts/get";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { getAllPosts } from "@/actions/posts/getAll";
 
 export const revalidate = 0
 
@@ -13,7 +16,7 @@ export default async function Home() {
   const userId = cookies().get("auth_token")?.value ?? "";
 
   const user = await getUserById(userId);
-  const posts = await getPostsByUser(userId);
+  const posts = await getAllPosts();
 
   if(!user) {
     redirect("/login");
@@ -30,7 +33,11 @@ export default async function Home() {
 
       <CreatePost user={user} />
 
-      {posts.map(post => <Post key={post.id} post={post} user={user} />)}
+      {posts.map(post => (
+        <Fragment key={post.id}>
+          {post.user && <Post post={post} user={post.user} />}
+        </Fragment>
+      ))}
     </>
   );
 }
