@@ -7,8 +7,8 @@ import { registerUser } from "@/actions/users/register";
 
 export default function Register() {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-[rgba(91,_112,_131,_0.4)]">
-      <form className="bg-black flex flex-col items-center gap-6 px-20 py-8 rounded-2xl" action={registerUser}>
+    <div className="fixed z-50 inset-0 flex items-center justify-center bg-[rgba(91,_112,_131,_0.4)] p-6">
+      <form className="bg-black flex flex-col items-center gap-6 p-8 lg:px-20 rounded-2xl max-w-full max-h-[70vh] overflow-y-auto overflow-x-hidden" action={registerUser}>
         <header>
           <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" width={26} height={26}>
             <g>
