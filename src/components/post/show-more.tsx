@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, RefObject, Fragment, useRef } from "react";
+import { useState, useEffect, type RefObject, Fragment, useRef } from "react";
 
 import { Post } from "@/components/post";
 import { Spinner } from "@/components/ui/spinner";
@@ -61,7 +61,7 @@ export function ShowMorePosts({ user }: { user: User }) {
           {post.user && <Post post={post} user={user} />}
         </Fragment>
       ))}
-      {!max && <Spinner ref={ref} />}
+      {!max && <Spinner ref={ref} className="p-4" />}
     </>
   );
 }

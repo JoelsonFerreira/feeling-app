@@ -146,16 +146,16 @@ const navLinks = [
 
 export function Navbar() {
   return (
-    <header className="hidden xl:block sticky top-0 p-2 h-max">
-      <nav className="flex flex-col items-start">
+    <header className="fixed bottom-0 left-0 w-full overflow-hidden bg-black lg:sticky lg:bottom-[unset] lg:top-0 p-2 h-max">
+      <nav className="flex justify-between lg:flex-col items-start">
         {navLinks.map(({
           Icon,
           label,
           href,
         }, idx) => (
-          <Link key={idx} href={href} className="text-[rgba(231,233,234,1.00)] inline-flex items-center justify-start gap-5 py-3 px-5 rounded-full transition-colors hover:bg-[rgba(231,_233,_234,_0.1)] text-xl">
+          <Link key={idx} href={href} className="text-[rgba(231,233,234,1.00)] gap-5 py-3 px-5 rounded-full transition-colors hover:bg-[rgba(231,_233,_234,_0.1)] text-xl [&:nth-child(n+7)]:hidden [&:nth-child(1)]:hidden lg:[&:nth-child(n+7)]:inline-flex lg:[&:nth-child(1)]:inline-flex lg:inline-flex lg:items-center lg:justify-start">
             <Icon />
-            {label && label.trim().length > 0 && <span>{label}</span>}
+            {label && label.trim().length > 0 && <span className="hidden lg:block">{label}</span>}
           </Link>
         ))}
       </nav>
