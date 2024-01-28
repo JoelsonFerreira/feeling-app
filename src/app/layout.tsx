@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="min-h-screen bg-black xl:grid xl:justify-center xl:grid-cols-[auto_min(600px,100%)_auto] gap-8">
           <Navbar />
-          <main className="border-x border-[#2F3336] w-full">
+          <main className="lg:border-x border-[#2F3336] w-full">
             {children}
           </main>
           <Trends />
