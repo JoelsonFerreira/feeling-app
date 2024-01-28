@@ -4,13 +4,14 @@ import prisma from "@/lib/prisma";
 import { getUserById } from "@/actions/users/get";
 import { Post } from "@prisma/client";
 
-export async function getPostRelations(post: Post) {
+export async function getPostRelations(post: Post, userId: string) {
   return {
     ...post,
     comments: await prisma.post.count({ where: { parentId: post.id } }),
     likes: await prisma.like.count({ where: { postId: post.id } }),
     views: await prisma.view.count({ where: { postId: post.id } }),
-    user: await getUserById(post.authorId ?? "")
+    user: await getUserById(post.authorId ?? ""),
+    liked: !!await prisma.like.findFirst({ where: { userId, postId: post.id } })
   }
 }
 
@@ -36,7 +37,7 @@ export async function getPostReplies(postId: string, userId: string) {
 
   await Promise.all(posts.map(post => viewPost(post.id, userId)))
 
-  return Promise.all(posts.map(post => getPostRelations(post)))
+  return Promise.all(posts.map(post => getPostRelations(post, userId)))
 }
 
 export async function getPost(postId: string, userId: string) {
@@ -50,7 +51,7 @@ export async function getPost(postId: string, userId: string) {
 
   await viewPost(post.id, userId)
 
-  return getPostRelations(post)
+  return getPostRelations(post, userId)
 }
 
 export async function getPostsByUser(userId: string) {
@@ -67,5 +68,5 @@ export async function getPostsByUser(userId: string) {
 
   await Promise.all(posts.map(post => viewPost(post.id, userId)))
 
-  return Promise.all(posts.map(post => getPostRelations(post)))
+  return Promise.all(posts.map(post => getPostRelations(post, userId)))
 }

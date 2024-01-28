@@ -11,46 +11,17 @@ import { Avatar } from "@/components/ui/avatar";
 import { likePost } from "@/actions/posts/like";
 import type { TPost } from "@/actions/posts/get-all";
 
-import { timeSince } from "@/lib/utils";
+import { abbrNum, timeSince } from "@/lib/utils";
 
 import { User } from "@prisma/client";
-
-function abbrNum(number: number, decPlaces: number) {
-  let _number = number
-  let _decPlaces = decPlaces
-
-  _decPlaces = Math.pow(10, _decPlaces);
-
-  const abbrev = ["k", "m", "b", "t"];
-
-  for (var i = abbrev.length - 1; i >= 0; i--) {
-    const size = Math.pow(10, (i + 1) * 3);
-
-    if (size <= _number) {
-      _number = Math.round(_number * _decPlaces / size) / _decPlaces;
-
-      if ((_number == 1000) && (i < abbrev.length - 1)) {
-        _number = 1;
-        i++;
-      }
-
-      return `${_number}${abbrev[i]}`
-    }
-  }
-
-  return `${_number}`;
-}
+import { Like } from "./like";
 
 function PostFooter({ post, user }: { post: TPost, user: User | null }) {
   return (
     <footer className="flex justify-between items-center mt-3 text-[#666666]">
       <ButtonIcon icon={<CommentIcon />} label={abbrNum(post.comments, 2)} />
       <ButtonIcon icon={<ShareIcon />} label={abbrNum(post.shares, 2)} />
-      <form action={likePost}>
-        <input type="hidden" name="postId" value={post.id} />
-        <input type="hidden" name="userId" value={user?.id} />
-        <ButtonIcon icon={<LikeIcon />} label={abbrNum(post.likes, 2)} />
-      </form>
+      <Like post={post} userId={user?.id} />
       <ButtonIcon icon={<ViewIcon />} label={abbrNum(post.views, 2)} />
     </footer>
   )
