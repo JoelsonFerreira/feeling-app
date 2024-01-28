@@ -19,10 +19,10 @@ import { Like } from "./like";
 function PostFooter({ post, user }: { post: TPost, user: User | null }) {
   return (
     <footer className="flex justify-between items-center mt-3 text-[#666666]">
-      <ButtonIcon icon={<CommentIcon />} label={abbrNum(post.comments, 2)} />
-      <ButtonIcon icon={<ShareIcon />} label={abbrNum(post.shares, 2)} />
+      <ButtonIcon color="blue" icon={<CommentIcon />} label={abbrNum(post.comments, 2)} />
+      <ButtonIcon color="green" icon={<ShareIcon />} label={abbrNum(post.shares, 2)} />
       <Like post={post} userId={user?.id} />
-      <ButtonIcon icon={<ViewIcon />} label={abbrNum(post.views, 2)} />
+      <ButtonIcon color="blue" icon={<ViewIcon />} label={abbrNum(post.views, 2)} />
     </footer>
   )
 }
