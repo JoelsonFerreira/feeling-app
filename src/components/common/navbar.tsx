@@ -146,7 +146,7 @@ const navLinks = [
 
 export function Navbar() {
   return (
-    <header className="fixed bottom-0 left-0 w-full overflow-hidden bg-black lg:sticky lg:bottom-[unset] lg:top-0 p-2 h-max">
+    <header className="fixed bottom-0 left-0 w-full z-10 overflow-hidden bg-black lg:sticky lg:bottom-[unset] lg:top-0 p-2 h-max border-t border-[#2F3336] lg:border-none">
       <nav className="flex justify-between lg:flex-col items-start">
         {navLinks.map(({
           Icon,

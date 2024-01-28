@@ -59,7 +59,7 @@ const icons = [
 
 export function CreatePost({ user, parentPostId }: { user: User, parentPostId?: string }) {
   return (
-    <div className="p-4 flex items-start gap-3">
+    <div className="p-4 flex items-start gap-3 border-b border-[#2F3336]">
       <Avatar alt="" src={user.avatar ?? ""} />
       <form className="flex flex-col grow gap-4" action={savePost}>
         <textarea placeholder="O que está acontecendo?" className="w-full bg-transparent" name="status" />

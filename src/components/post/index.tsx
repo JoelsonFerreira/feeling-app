@@ -35,7 +35,7 @@ function PostContent({ post }: { post: TPost }) {
 
 export function Post({ post, user }: { post: TPost, user: User | null }) {
   return (
-    <section className="border-y border-[#2F3336] p-4 flex gap-3 justify-start items-start">
+    <section className="border-b border-[#2F3336] p-4 flex gap-3 justify-start items-start">
       <Avatar alt="" src={post.user?.avatar ?? ""} />
       <article className="w-full flex flex-col">
         <header className="flex items-center justify-between gap-1">
