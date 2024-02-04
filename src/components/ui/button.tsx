@@ -1,37 +1,56 @@
-import type { ButtonHTMLAttributes, HTMLAttributes } from "react";
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
 
-export function Button({className, ...props}: ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button className={`bg-[rgb(29,_155,_240)] py-2 px-4 rounded-full transition-colors hover:bg-[rgb(26,_142,_219)] font-bold text-sm ${className}`} {...props} />
-  )
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
 }
 
-const colors = {
-  "blue": {
-    active: "text-[rgb(29,155,240)]",
-    text: "hover:text-[rgb(29,155,240)]",
-    bg: "group-hover:bg-[rgba(29,155,240,0.1)]"
-  },
-  "red": {
-    active: "text-[rgb(249,24,128)]",
-    text: "hover:text-[rgb(249,24,128)]",
-    bg: "group-hover:bg-[rgba(249,24,128,0.1)]"
-  },
-  "green": {
-    active: "text-[rgb(0,186,124)]",
-    text: "hover:text-[rgb(0,186,124)]",
-    bg: "group-hover:bg-[rgba(0,186,124,0.1)]"
-  },
-}
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
 
-export function ButtonIcon({ label, icon, color, active, className, ...props }: { active?: boolean, label?: string, icon?: JSX.Element, color?: keyof typeof colors } & HTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button {...props} className={`${className} flex items-center gap-1 transition-colors group ${color ? colors[color].text : ""} ${active && color ? colors[color].active : ""}`}>
-      <span className="relative flex items-center justify-center">
-        <span className={`absolute scale-150 w-full h-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors ${color ? colors[color].bg : ""}`} />
-        {icon}
-      </span>
-      {label}
-    </button>
-  );
-}
+export { Button, buttonVariants }

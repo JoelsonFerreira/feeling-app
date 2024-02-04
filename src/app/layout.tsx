@@ -3,14 +3,19 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 
 import { Navbar } from "@/components/common/navbar";
-import { Trends } from "@/components/common/trends";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+import { ThemeProvider } from "@/contexts/theme-provider";
 
 import "./globals.css";
+import { ServerProvider } from "@/contexts/server-context";
+import { QueryProvider } from "@/contexts/query-provider";
+import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Página inicial / X",
+  title: "Página inicial / FeelingApp",
   description: "",
 };
 
@@ -22,13 +27,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen bg-black xl:grid xl:justify-center xl:grid-cols-[auto_min(600px,100%)_auto] gap-8">
-          <Navbar />
-          <main className="lg:border-x border-[#2F3336] w-full pb-16 lg:pb-0">
-            {children}
-          </main>
-          <Trends />
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProvider>
+            <ServerProvider>
+              <div className="min-h-screen w-full max-w-4xl mx-auto lg:grid grid-cols-[1fr_3fr] gap-4">
+                <Navbar />
+                <ScrollArea className="h-svh p-4 lg:pl-0" id="posts-list">
+                  {children}
+                </ScrollArea>
+              </div>
+            </ServerProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

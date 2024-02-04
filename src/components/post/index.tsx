@@ -1,63 +1,82 @@
 import Link from "next/link";
 
-import { CommentIcon } from "@/icons/comment";
-import { ShareIcon } from "@/icons/share";
-import { ViewIcon } from "@/icons/view";
+import { BarChartIcon, MessageCircleIcon } from "lucide-react";
 
-import { ButtonIcon } from "@/components/ui/button";
-import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Like } from "@/components/post/like";
-
-import type { TPost } from "@/actions/posts/get-all";
 
 import { abbrNum, timeSince } from "@/lib/utils";
 
-import type { User } from "@prisma/client";
+import type { Post } from "@/types/post";
+import type { User } from "@/types/user";
 
-function PostFooter({ post, user }: { post: TPost, user: User | null }) {
+function PostFooter({ post, user }: { post: Post, user: User | null }) {
   return (
-    <footer className="flex justify-between items-center mt-3 text-[#666666]">
-      <ButtonIcon color="blue" icon={<CommentIcon />} label={abbrNum(post.comments, 2)} />
-      <ButtonIcon color="green" icon={<ShareIcon />} label={abbrNum(post.shares, 2)} />
+    <footer className="grid grid-cols-3 gap-2 w-max ml-auto">
+      <Button
+        color="blue"
+        size={"icon"}
+        variant={"ghost"}
+        className="grid grid-cols-[auto_auto] gap-2"
+      >
+        <BarChartIcon size={14} />
+        {abbrNum(post.views, 2)}
+      </Button>
+      <Button
+        color="blue"
+        size={"icon"}
+        variant={"ghost"}
+        className="grid grid-cols-[auto_auto] gap-2"
+        asChild
+      >
+        <Link href={`/post/${post.id}`}>
+          <MessageCircleIcon size={14} />
+          {abbrNum(post.comments, 2)}
+        </Link>
+      </Button>
       <Like post={post} userId={user?.id} />
-      <ButtonIcon color="blue" icon={<ViewIcon />} label={abbrNum(post.views, 2)} />
     </footer>
   )
 }
 
-function PostContent({ post }: { post: TPost }) {
+function PostContent({ post }: { post: Post }) {
   return (
-    <Link href={`/post/${post.id}`} className="text-[#e9e7ea] text-sm mt-2">
+    <Link href={`/post/${post.id}`} className="text-sm">
       <span>{post.status}</span>
     </Link>
   )
 }
 
-export function Post({ post, user }: { post: TPost, user: User | null }) {
+export function Post({ post, user }: { post: Post, user: User | null }) {
   return (
-    <section className="border-b border-[#2F3336] p-4 flex gap-3 justify-start items-start">
-      <Avatar alt="" src={post.user?.avatar ?? ""} />
-      <article className="w-full flex flex-col">
-        <header className="flex items-center justify-between gap-1">
-          <div className="flex flex-col items-start lg:flex-row lg:items-center gap-1">
-            <Link href="/" className="font-semibold hover:underline leading-none">{post.user?.name}</Link>
-            <div className="flex items-center">
-              <span className="text-sm text-[rgb(113,_118,_123)] leading-none">@{post.user?.id}</span>
-              <span className="text-sm text-[rgb(113,_118,_123)] leading-none relative flex items-center pl-1.5 before:left-0 before:absolute before:w-[2px] before:h-[2px] before:bg-[rgb(113,_118,_123)] before:rounded-full">{timeSince(post.createdAt)}</span>
-            </div>
+    <Card className="p-4">
+      <CardHeader className="grid grid-cols-[auto_1fr] items-center gap-2 p-0 space-y-0">
+        <Avatar>
+          <AvatarImage alt="" src={post.user?.avatar ?? ""} />
+          <AvatarFallback>
+            {post.user?.name.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+
+        <div className="flex flex-row items-center gap-1 justify-between">
+          <Link href="/" className="font-semibold hover:underline leading-none">{post.user?.name}</Link>
+          <div className="flex items-center gap-2">
+            <span className="text-sm leading-none">@{post.user?.id}</span>
+            <span className="text-sm leading-none relative flex items-center">{timeSince(new Date(post.createdAt))}</span>
           </div>
-          <ButtonIcon className="text-[rgb(113,_118,_123)]" icon={(
-            <svg viewBox="0 0 24 24" aria-hidden="true" width={18} height={18} fill="currentColor">
-              <g>
-                <path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z">
-                </path>
-              </g>
-            </svg>
-          )} />
-        </header>
+        </div>
+      </CardHeader>
+      <CardContent className="w-full flex flex-col p-0 pt-2">
         <PostContent post={post} />
+      </CardContent>
+      <CardFooter className="p-0">
         <PostFooter post={post} user={user} />
-      </article>
-    </section>
+      </CardFooter>
+      <div className="grid gap-4">
+        {post.children.map(child => <Post key={child.id} post={child} user={user} />)}
+      </div>
+    </Card>
   )
 }
