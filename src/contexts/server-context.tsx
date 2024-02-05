@@ -1,49 +1,56 @@
 "use client"
 
-import { type ReactNode, createContext, useContext, useState, useEffect } from "react";
-import axios, { type AxiosResponse } from "axios";
-import { useQuery, useInfiniteQuery, type FetchNextPageOptions, type InfiniteQueryObserverResult } from "react-query";
+import { useRouter } from "next/navigation";
+import { type ReactNode, createContext, useContext, useState } from "react";
+import { type AxiosResponse } from "axios";
+import { useInfiniteQuery, type FetchNextPageOptions, type InfiniteQueryObserverResult, type QueryFunctionContext, type QueryKey, useMutation } from "react-query";
+
+import { api } from "@/lib/api";
+import { useWebSocket } from "@/hooks/useWebSocket";
 
 import type { Post } from "@/types/post";
-import type { User } from "@/types/user";
-import { useRouter } from "next/navigation";
+import type { NotificationEventData, PostEventData } from "@/types/events";
+import { queryClient } from "./query-provider";
 
 type TServerContext = {
   posts: Post[]
-  user: User | null
-  login: (username: string, password: string) => Promise<unknown>
-  logout: () => Promise<unknown>
-  register: (id: string, email: string, name: string, password: string) => Promise<unknown>
   post: (status: string, parentId?: string) => Promise<unknown>
+  like: (status: string, parentId?: string) => Promise<unknown>
   fetchMorePosts: (options?: FetchNextPageOptions) => Promise<InfiniteQueryObserverResult<AxiosResponse<Post[]>, unknown>>
   loadingPosts: boolean
-  loadingUser: boolean
-  morePosts: {
-    postId: string,
-    userId: string,
-    avatar?: string | null
-  }[]
+  morePosts: PostEventData[]
   fetchMore: (scrollElementSelector: string) => void
 }
 
 const ServerContext = createContext<TServerContext | null>(null)
 
-export const api = axios.create({
-  baseURL: `http://localhost:8080`,
-  withCredentials: true,
-})
+type CreatePostMutation = {
+  status: string, 
+  parentId: string | null
+}
+
+type LikePostMutation = {
+  postId: string, 
+}
+
+const serverRoutes = {
+  getPosts: (page: QueryFunctionContext<QueryKey>) => api.get<Post[]>(`/posts?page=${page.pageParam ?? 0}`),
+  createPost: (data: CreatePostMutation) => api.post<Post>("/posts", data),
+  likePost: (data: LikePostMutation) => api.post("/posts/like", data)
+}
 
 export function ServerProvider({ children }: { children?: ReactNode }) {
-  const [morePosts, setMorePosts] = useState<{
-    postId: string,
-    userId: string,
-    avatar?: string | null
-  }[]>([])
+  const [morePosts, setMorePosts] = useState<PostEventData[]>([])
   const { refresh, push } = useRouter()
 
-  const { data: postsData, fetchNextPage, isLoading: loadingPosts, refetch } = useInfiniteQuery<AxiosResponse<Post[]>>(
+  const {
+    data: postsData,
+    fetchNextPage,
+    isLoading: loadingPosts,
+    refetch
+  } = useInfiniteQuery<AxiosResponse<Post[]>>(
     "posts",
-    (page) => api.get(`/posts?page=${page.pageParam ?? 0}`),
+    serverRoutes.getPosts,
     {
       retry: 0,
       getNextPageParam: (lastPage, allPages) => {
@@ -52,67 +59,45 @@ export function ServerProvider({ children }: { children?: ReactNode }) {
       }
     }
   );
-  const { data: userData, isLoading: loadingUser } = useQuery<AxiosResponse<User>>(`user`, () => api.get('/auth/user'), { retry: 0 });
+  const { mutateAsync: postMutation } = useMutation({ mutationFn: serverRoutes.createPost })
+  const { mutateAsync: likeMutation } = useMutation({ mutationFn: serverRoutes.likePost })
 
-  useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:8080`);
-
-    ws.onopen = () => console.log('[server] connected');
-    ws.onclose = () => console.log('[server] disconnected');
-    ws.onmessage = (event: { data: string }) => {
-      const messageData = JSON.parse(event.data);    
-
-      switch (messageData.event) {
-        case 'post':
-          setMorePosts(prev => [...prev, messageData.data])
-          return;
-
-        case 'notification':
-          if(messageData.data.type === "reply") {
-            alert(`New notification! ${messageData.data.userId} reply your post.`)
-            push(`/post/${messageData.data.postId}`)
-          }
-          return;
+  useWebSocket([
+    { event: "post", callback: (data: PostEventData) => setMorePosts(prev => [...prev, data]) },
+    {
+      event: "notification", callback: (data: NotificationEventData) => {
+        if (data.type === "reply") {
+          alert(`New notification! ${data.userId} reply your post.`)
+          push(`/post/${data.postId}`)
+        }
       }
-    };
-
-    return () => { ws.close(); };
-  }, [push])
-
-  const login = (username: string, password: string) => {
-    return api.post("/auth/login", {
-      username,
-      password
-    });
-  }
-
-  const register = (
-    id: string,
-    email: string,
-    name: string,
-    password: string,
-  ) => {
-    return api.post("/auth/register", {
-      id,
-      email,
-      name,
-      password,
-    });
-  }
-
-  const logout = () => {
-    return api.post("/auth/logout");
-  }
+    }
+  ])
 
   const post = async (status: string, parentId?: string) => {
-    const post = await api.post("/posts", {
+    const { data } = await postMutation({
       status,
       parentId: parentId && parentId.trim().length > 0 ? parentId : null
     })
+    
+    // queryClient.setQueryData(['posts'], (old) => {
+    //   console.log(">>>>", old);      
+
+    //   // return old ? [...old, data] : [data]
+    //   return { ...old, pages:  }
+    // })
 
     refetch();
 
-    return post;
+    return data;
+  }
+
+  const like = async (postId: string) => {
+    const { data } = await likeMutation({ postId })
+
+    refetch();
+
+    return data;
   }
 
   const allPosts = postsData?.pages.reduce((result, page) => [...result, ...page.data], [] as Post[]) ?? []
@@ -121,14 +106,10 @@ export function ServerProvider({ children }: { children?: ReactNode }) {
     <ServerContext.Provider
       value={{
         posts: allPosts,
-        user: userData?.data ?? null,
-        login,
-        register,
-        logout,
         post,
+        like,
         fetchMorePosts: fetchNextPage,
         loadingPosts,
-        loadingUser,
         morePosts: morePosts.filter(post => !allPosts.some(p => p.id === post.postId)),
         fetchMore: (scrollElementSelector: string) => {
           const element = document.querySelector(scrollElementSelector)

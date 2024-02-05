@@ -11,6 +11,7 @@ import "./globals.css";
 import { ServerProvider } from "@/contexts/server-context";
 import { QueryProvider } from "@/contexts/query-provider";
 import { cookies } from "next/headers";
+import { AuthProvider } from "@/contexts/auth-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,12 +36,14 @@ export default function RootLayout({
         >
           <QueryProvider>
             <ServerProvider>
-              <div className="min-h-screen w-full max-w-4xl mx-auto lg:grid grid-cols-[1fr_3fr] gap-4">
-                <Navbar />
-                <ScrollArea className="h-svh p-4 lg:pl-0" id="posts-list">
-                  {children}
-                </ScrollArea>
-              </div>
+              <AuthProvider>
+                <div className="min-h-screen w-full max-w-4xl mx-auto lg:grid grid-cols-[1fr_3fr] gap-4">
+                  <Navbar />
+                  <ScrollArea className="h-svh p-4 lg:pl-0" id="posts-list">
+                    {children}
+                  </ScrollArea>
+                </div>
+              </AuthProvider>
             </ServerProvider>
           </QueryProvider>
         </ThemeProvider>

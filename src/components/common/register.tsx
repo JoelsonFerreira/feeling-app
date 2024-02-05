@@ -3,7 +3,7 @@ import { z } from "zod"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { useChat } from "@/contexts/server-context";
+import { useAuth } from "@/contexts/auth-context";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ const formSchema = z.object({
 })
 
 export function Register({ setStep }: { setStep: (step: "login" | "register") => void }) {
-  const { register } = useChat()
+  const { register } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,8 +48,6 @@ export function Register({ setStep }: { setStep: (step: "login" | "register") =>
     const password = values.password
 
     await register(username, email, name, password)
-
-    window.location.reload();
   }
 
   return (

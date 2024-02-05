@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 
 import type { ReactNode } from "react"
 
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 
 export function QueryProvider({
   children

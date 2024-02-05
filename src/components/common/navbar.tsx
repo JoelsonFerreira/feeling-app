@@ -5,10 +5,10 @@ import Link from "next/link";
 import { BellIcon, HomeIcon, MessageCircle, SettingsIcon, TvIcon, UserIcon } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import { ThemeToggle } from "@/components/common/toggle-theme";
 import { Logout } from "@/components/logout-button";
-import { useChat } from "@/contexts/server-context";
+
+import { useAuth } from "@/contexts/auth-context";
 
 const navLinks = [
   {
@@ -39,7 +39,7 @@ const navLinks = [
 ]
 
 export function Navbar() {
-  const { user } = useChat()
+  const { user } = useAuth()
 
   return (
     <nav className="flex justify-between border-t w-full bg-background gap-6 content-start lg:border-none lg:flex lg:flex-col lg:justify-between lg:bottom-[unset] lg:sticky lg:top-0 lg:h-svh lg:p-4 lg:pr-0">

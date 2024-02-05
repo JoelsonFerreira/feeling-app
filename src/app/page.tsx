@@ -8,11 +8,13 @@ import { ShowMorePosts } from "@/components/post/show-more";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { useChat } from "@/contexts/server-context";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Home() {
-  const { user, loadingUser, morePosts, fetchMore } = useChat();
+  const { morePosts, fetchMore } = useChat();
+  const { user, loading } = useAuth()
 
-  if (loadingUser) return <Spinner />;
+  if (loading) return <Spinner />;
 
   if (!user) return <Auth />;
 
@@ -40,7 +42,7 @@ export default function Home() {
 
       <CreatePost />
 
-      <ShowMorePosts user={user} />
+      <ShowMorePosts />
     </main>
   );
 }

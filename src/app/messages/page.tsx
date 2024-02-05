@@ -4,10 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Auth } from "@/components/common/auth";
 import { MessageList } from "@/components/chat/message-list";
 
-import { useChat } from "@/contexts/server-context";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Messages() {
-  const { user } = useChat()
+  const { user } = useAuth()
 
   if (!user) {
     return <Auth />;

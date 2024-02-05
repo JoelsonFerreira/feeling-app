@@ -6,27 +6,31 @@ import { HeartIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import { useChat } from "@/contexts/server-context";
+
 import { abbrNum } from "@/lib/utils";
 
 import type { Post } from "@/types/post";
 
-export function Like({ post, userId }: { post: Post, userId?: string }) {
+export function Like({ post }: { post: Post }) {
   const [active, setActive] = useState(post.liked ?? false)
+  const { like } = useChat()
+
+  const handleLikePost = () => {
+    setActive(true)
+    like(post.id)
+  }
 
   return (
-    <form onSubmit={() => {}}>
-      <input type="hidden" name="postId" value={post.id} />
-      <input type="hidden" name="userId" value={userId} />
-      <Button
-        color="red"
-        onClick={() => setActive(true)}
-        size={"icon"}
-        variant={"ghost"}
-        className="grid grid-cols-[auto_auto] gap-2"
-      >
-        <HeartIcon size={14} />
-        {abbrNum(active ? post.likes + 1 : post.likes, 2)}
-      </Button>
-    </form>
+    <Button
+      color="red"
+      onClick={handleLikePost}
+      size={"icon"}
+      variant={"ghost"}
+      className={`grid grid-cols-[auto_auto] gap-2 ${active ? "text-red-500" : ""}`}
+    >
+      <HeartIcon size={14} />
+      {abbrNum(post.likes, 2)}
+    </Button>
   )
 }

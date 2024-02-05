@@ -1,4 +1,7 @@
+"use client"
+
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 import { BarChartIcon, MessageCircleIcon } from "lucide-react";
 
@@ -10,9 +13,9 @@ import { Like } from "@/components/post/like";
 import { abbrNum, timeSince } from "@/lib/utils";
 
 import type { Post } from "@/types/post";
-import type { User } from "@/types/user";
 
-function PostFooter({ post, user }: { post: Post, user: User | null }) {
+
+function PostFooter({ post }: { post: Post }) {
   return (
     <footer className="grid grid-cols-3 gap-2 w-max ml-auto">
       <Button
@@ -36,7 +39,7 @@ function PostFooter({ post, user }: { post: Post, user: User | null }) {
           {abbrNum(post.comments, 2)}
         </Link>
       </Button>
-      <Like post={post} userId={user?.id} />
+      <Like post={post} />
     </footer>
   )
 }
@@ -49,9 +52,22 @@ function PostContent({ post }: { post: Post }) {
   )
 }
 
-export function Post({ post, user }: { post: Post, user: User | null }) {
+export function Post({ post }: { post: Post }) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if(ref.current) {
+      setTimeout(function(){
+        if(ref.current) {
+          ref.current.style.transform = "translateX(0)";
+          ref.current.style.opacity = "1";
+        }
+      })
+    }
+  }, [ref])
+
   return (
-    <Card className="p-4">
+    <Card className="p-4 transition-all duration-700 translate-x-full opacity-0" ref={ref}>
       <CardHeader className="grid grid-cols-[auto_1fr] items-center gap-2 p-0 space-y-0">
         <Avatar>
           <AvatarImage alt="" src={post.user?.avatar ?? ""} />
@@ -72,10 +88,10 @@ export function Post({ post, user }: { post: Post, user: User | null }) {
         <PostContent post={post} />
       </CardContent>
       <CardFooter className="p-0">
-        <PostFooter post={post} user={user} />
+        <PostFooter post={post} />
       </CardFooter>
       <div className="grid gap-4">
-        {post.children.map(child => <Post key={child.id} post={child} user={user} />)}
+        {post.children.map(child => <Post key={child.id} post={child} />)}
       </div>
     </Card>
   )

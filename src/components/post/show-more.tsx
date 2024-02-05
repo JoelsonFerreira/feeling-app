@@ -11,7 +11,7 @@ import { useChat } from "@/contexts/server-context";
 
 import type { User } from "@/types/user";
 
-export function ShowMorePosts({ user }: { user: User }) {
+export function ShowMorePosts() {
   const ref = useRef<HTMLDivElement | null>(null);
   const { isInView } = useInView(ref);
   const { fetchMorePosts, posts } = useChat()
@@ -33,7 +33,7 @@ export function ShowMorePosts({ user }: { user: User }) {
     <>
       {posts.map(post => (
         <Fragment key={post.id}>
-          {post.user && <Post post={post} user={user} />}
+          {post.user && <Post post={post} />}
         </Fragment>
       ))}
       {!maxPosts && <Spinner ref={ref} className="p-4" />}
